@@ -1,0 +1,19 @@
+#!/bin/bash
+
+FILE="~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/com.soerenkampschroer.plextovlc2.json"
+EXECUTABLE="${2}/plex-to-vlc.app/Contents/MacOS/plex-to-vlc"
+
+
+cat >~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/com.soerenkampschroer.plextovlc.json <<EOL
+{
+    "name": "com.soerenkampschroer.plextovlc",
+    "description": "Plex to VLC",
+    "path": "${EXECUTABLE}",
+    "type": "stdio",
+    "allowed_origins": [
+      "chrome-extension://admjkihehbkklbidlcpmjcaplbkngeed/"
+    ]
+  }
+EOL
+
+exit 0

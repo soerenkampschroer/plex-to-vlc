@@ -1,0 +1,9 @@
+{
+    "name": "com.soerenkampschroer.plextovlc",
+    "description": "Plex to VLC",
+    "path": "/Applications/plex-to-vlc.app/Contents/MacOS/plex-to-vlc",
+    "type": "stdio",
+    "allowed_origins": [
+      "chrome-extension://admjkihehbkklbidlcpmjcaplbkngeed/"
+    ]
+  }
