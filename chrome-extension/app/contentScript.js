@@ -30,6 +30,13 @@ function addVlcLink() {
 
 function handleTriggerClicked() {
     
+    // hide edit popup and backdrop
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = '.modal-backdrop, .edit-metadata-modal { opacity: 0 !important; } html { pointer-events: none; }';
+    document.getElementsByTagName('head')[0].appendChild(style);
+
+
     // open edit popup
     var event = new Event('mousedown', {
         view: window,
@@ -75,6 +82,7 @@ function handleTriggerClicked() {
 
             sendFilePath(filePaths);
 
+            style.remove();
         }, 0);
 
     }, 600);

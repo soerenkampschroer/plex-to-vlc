@@ -21,6 +21,13 @@ function openVlc(filePath) {
 }
 
 function onDisconnected() {
-	console.log(chrome.runtime.lastError.message);
+	console.log(chrome.runtime.lastError);
+	
+	// if native host is not installed
+	if (chrome.runtime.lastError.message == "Specified native messaging host not found.") {
+		if (confirm("You need to install the native host application. Do you want to open the guide now?\n\nYou can also click on the extension icon to learn more.")) {
+			window.open('https://github.com/soerenkampschroer/plex-to-vlc/releases/latest', '_blank');
+		}
+	}
 	port = null;
 }
