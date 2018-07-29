@@ -1,64 +1,83 @@
-const {app, dialog} = require('electron');
-const escapeStringRegExp = require("escape-string-regexp");
+const {app} = require('electron');
 const exec = require('child_process').exec;
+const fs = require('fs');
+const escapeStringRegExp = require("escape-string-regexp");
+const nativeMessage = require('chrome-native-messaging');
 
-const executablePath = '/Applications/VLC.app/Contents/MacOS/VLC';
+const playerName = '';
 
-app.on('ready', () => { 
-    
-    setupNativeMessageListener();
-    
+app.on('ready', () => {
+    process.stdin
+        .pipe(new nativeMessage.Input())
+        .pipe(new nativeMessage.Transform(messageReceived))
+        .pipe(new nativeMessage.Output())
+        .pipe(process.stdout)
+    ;
 })
 
-function setupNativeMessageListener() {
-    
-    process.stdin.setEncoding('utf8');
-    
-    // listen for stdin data
-    process.stdin.on('data', (chunk) => {
-        
-        let filePath;
-        
-        filePath = parseFilePathFromChunk(chunk);
 
-        runVlc(filePath);
+/**
+ * Listen to messages from browser extension.
+ * @param {object} request 
+ * @param {*} push 
+ * @param {*} done 
+ */
+function messageReceived(request, push, done) {
 
-        // quit
-        app.quit();
-        
+    if (fs.existsSync(request.filePath)) {
+        openPlayer(request, push, done);
+    } else {
+        request.status = "error";
+        request.message = "File not found";
+        push(request);
+        done();
+        //app.quit();
+    }
+}
+
+
+/**
+ * Opens a file using the specified app. The command looks like:
+ * open /path/to/file -a appname
+ * @param {object} request 
+ * @param {*} push 
+ * @param {*} done 
+ */
+function openPlayer(request, push, done) {
+    
+    let cmd,
+        filePathClean;
+
+    filePathClean = escapeFilePath(request.filePath);
+
+    // app path + file path as argument
+    cmd = 'open ' + filePathClean;
+
+    // open file in specific player if requested
+    if (playerName && playerName.length > 0) {
+        cmd+= ' -a ' + playerName;
+    }
+    
+    // open file
+    exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+            request.status = "error";
+            request.message = stderr;
+        } else {
+            request.status = "success";
+            request.message = "Started playback";
+        }
+        push(request);
+        done();
     });
-
 }
 
-function parseFilePathFromChunk(chunk) {
-
-    let json,
-        filePath;
-
-    // cut the first 4 chars and JSON parse
-    json = JSON.parse(chunk.slice(4, chunk.length));
-
-    // sanitize filepath
-    filePath = escapeFilePath(json.filePath);
-
-    return filePath;
-}
-
+/**
+ * Escapes whitespaces and some more fun stuff. 
+ * @param {string} filePath 
+ * @returns {string}
+ */
 function escapeFilePath(filePath) {
     filePath = filePath.trim();
     return escapeStringRegExp(filePath).replace(/(\s+)/g, '\\$1');
-}
-
-function runVlc(filePath) {
-    
-    let cmd;
-
-    // app path + file path as argument
-    cmd = executablePath +  ' ' + filePath;
-    
-    // const dialogOptions = {type: 'info', buttons: ['OK'], message: 'Do it?', detail: cmd};
-    // dialog.showMessageBox(dialogOptions, i => console.log(i));
-
-    // start vlc with media path
-    exec(cmd);
 }

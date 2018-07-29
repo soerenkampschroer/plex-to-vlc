@@ -14,7 +14,10 @@
     "appId": "com.soerenkampschroer.plex-to-vlc",
     "mac": {
       "category": "public.app-category.entertainment",
-      "target": ["pkg", "dmg"]
+      "target": [
+        "pkg",
+        "dmg"
+      ]
     },
     "pkg": {
       "scripts": "pkg-scripts"
@@ -26,6 +29,8 @@
     "electron-builder": "^20.24.4"
   },
   "dependencies": {
+    "chrome-native-messaging": "^0.2.0",
+    "electron-log": "^2.2.16",
     "escape-string-regexp": "^1.0.5"
   }
 }
