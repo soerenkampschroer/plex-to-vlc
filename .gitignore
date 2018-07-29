@@ -18,7 +18,7 @@ node_modules/
 .npm
 
 # Builds
-host/dist/
+dist/
 
 # General
 .DS_store
