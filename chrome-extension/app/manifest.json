@@ -7,22 +7,25 @@
     "48":  "icons/fullscreen-48.png",
     "128": "icons/fullscreen-128.png" },
   "background": { 
-    "scripts": ["background.js"] 
+    "scripts": ["scripts/background/background.js"] 
   },
   "content_scripts": [
     {
       "matches": ["http://127.0.0.1:32400/web/index.html*"],
-      "js": ["contentScript.js"]
+      "js": ["scripts/content/dist/content-script.bundle.js", "scripts/vendor/toastify-js.min.js"],
+      "css": ["scripts/vendor/toastify.min.css", "css/style.css"]
     }
   ],
   "permissions": [
     "nativeMessaging",
+    "activeTab",
     "http://127.0.0.1:32400/web/index.html*"
   ],
   "browser_action": {
       "default_name": "Send message!",
       "default_icon": "icons/fullscreen-48.png",
-      "default_popup": "options.html"
+      "default_popup": "html/options.html"
   },
-  "manifest_version": 2
+  "manifest_version": 2,
+  "web_accessible_resources": ["scripts/content.js", "scripts/contentScript.js"]
 }
