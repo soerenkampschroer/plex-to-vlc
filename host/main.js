@@ -24,14 +24,19 @@ app.on('ready', () => {
  */
 function messageReceived(request, push, done) {
 
-    if (fs.existsSync(request.filePath)) {
-        openPlayer(request, push, done);
-    } else {
-        request.status = "error";
-        request.message = "File not found";
+    if (request.type == "playback") {
+        if (fs.existsSync(request.filePath)) {
+            openPlayer(request, push, done);
+        } else {
+            request.status = "error";
+            request.message = "File not found";
+            push(request);
+            done();
+        }
+    } else if (request.type == "version") {
+        request.version = app.getVersion();
         push(request);
         done();
-        //app.quit();
     }
 }
 
