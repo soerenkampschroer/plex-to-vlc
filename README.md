@@ -9,8 +9,8 @@
 
 * The companion app only works on macOS and is needed for the Chrome extension to work.
 * This only works for files that are available locally on your computer.
-* VLC needs to be available at `/Applications/VLC.app`. I'm planning to make it more flexible in the future.
-* I don't have an Apple Developer account so I can't sign the app. You will be notified of that while installing or during the first launch. If you want to, you can go over the source (it's just ~80 lines total) and build/sign it yourself. Check *Development / Compiling* on how to do that.
+* I don't have an Apple Developer account so I can't sign the app. You will be notified of that while installing or during the first launch. If you want to, you can go over the source and build/sign it yourself. Check *Development / Compiling* on how to do that.
+* Currently not supporting playback of whole seasons or multile files.
 
 ## Installing
 
