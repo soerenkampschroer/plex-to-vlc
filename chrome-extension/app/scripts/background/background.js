@@ -87,7 +87,7 @@ function onDisconnected() {
  */
 function displayHostUpdateDialog() {
     if (confirm("You need to install latest native host application. Do you want to open the guide now?\n\nYou can also click on the extension icon to learn more.")) {
-        window.open("https://github.com/soerenkampschroer/plex-to-vlc/releases", "_blank");
+        window.open("https://github.com/soerenkampschroer/plex-to-vlc/releases/latest", "_blank");
     }
 }
 
