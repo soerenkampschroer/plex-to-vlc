@@ -32,7 +32,8 @@ class Main {
                 let request = {
                     "filePath": metadata.MediaContainer.Metadata[0].Media[0].Part[0].file,
                     "title": metadata.MediaContainer.Metadata[0].title,
-                    "id": id
+                    "id": id,
+                    "type": "playback"
                 };
                 this.sendPlaybackRequest(request);
             });
