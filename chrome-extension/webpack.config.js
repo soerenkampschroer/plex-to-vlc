@@ -1,5 +1,5 @@
+/* global __dirname */
 var path = require("path");
-var webpack = require("webpack");
 
 module.exports = {
     mode: "production",
@@ -17,7 +17,8 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["babel-preset-env"]
+                        presets: ["babel-preset-env"],
+                        plugins: ["transform-class-properties"]
                     }
                 }
             }

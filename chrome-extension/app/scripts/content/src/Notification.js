@@ -1,9 +1,5 @@
 /* global Toastify */
 
-/**
- * Notification Class
- * Wrapper for Toastify, displays notifications
- */
 export default class Notification {
 
     /**
@@ -23,7 +19,7 @@ export default class Notification {
      */
     display(text, type = Notification.Type.SUCCESS) {
 
-        var backgroundColor;
+        let backgroundColor;
 
         switch (type) {
             case Notification.Type.ERROR:
