@@ -24,7 +24,9 @@ class Main {
             );
         } else if (response.status == "success") {
             this.notification.display(response.message + ": " + response.title);
-            this.plexApi.markAsPlayed(response.id);
+            if (response.markItemsPlayed) {
+                this.plexApi.markAsPlayed(response.id);
+            }
         }
     }
 
@@ -36,8 +38,8 @@ class Main {
         
         if (id) {
             this.plexApi.getItemMetadata(id)
-                .then(this.sendPlaybackRequest)
-                .catch (this.handleServerUnavailable);
+                .then(this.sendPlaybackRequest.bind(this))
+                .catch (this.handleServerUnavailable.bind(this));
         } else {
             this.notification.display(
                 "Could not get media id.", 
@@ -52,7 +54,7 @@ class Main {
      */
     handleServerUnavailable(error) {
         this.notification.display(
-            "Error: Could not reach server.", 
+            "Could not reach server.",
             Notification.Type.ERROR
         );
         console.log(error);
@@ -69,7 +71,15 @@ class Main {
             "id": metadata.MediaContainer.Metadata[0].ratingKey,
             "type": "playback"
         };
-        chrome.runtime.sendMessage(request);
+        console.log(request);
+        try {
+            chrome.runtime.sendMessage(request);
+        } catch (error) {
+            this.notification.display(
+                "Could not connect to extension. Please reload this page.",
+                Notification.Type.ERROR
+            );
+        }
     }
 
 }

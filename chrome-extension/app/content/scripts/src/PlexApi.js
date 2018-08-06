@@ -7,12 +7,14 @@ export default class PlexApi {
     getItemId() {
         let url = window.location.hash,
             id = null,
-            idx;
+            idx,
+            idEnd;
 
-        idx = url.indexOf("%2Fmetadata%2F");
+        idx = url.indexOf("%2Fmetadata%2F") + 14;
+        idEnd = url.indexOf("&", idx) - idx;
 
         if (idx > -1) {
-            id = url.substr(idx + 14);
+            id = url.substr(idx, idEnd);
         }
 
         return id;
@@ -27,6 +29,7 @@ export default class PlexApi {
             response;
 
         url = window.location.origin + "/library/metadata/" + id + "?includeConcerts=1&includeExtras=1&includeOnDeck=1&includePopularLeaves=1&includePreferences=1&includeChapters=1&asyncCheckFiles=0&asyncRefreshAnalysis=0&asyncRefreshLocalMediaAgent=0";
+        console.log(url);
         response = await this.makeRequest(url);
 
         return response;
@@ -56,7 +59,7 @@ export default class PlexApi {
      */
     async markAsPlayed(id) {
         let url = window.location.origin + "/:/scrobble?key=" + id + "&identifier=com.plexapp.plugins.library";
-
+        console.log(url);
         // this will throw an error but plex marks the file as played anyway..
         try {
             await this.makeRequest(url);

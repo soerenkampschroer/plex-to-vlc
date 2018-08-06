@@ -3,7 +3,6 @@ export default class PlayerButton {
     constructor(clickCallback) {
         this.callback = clickCallback;
         this.interval = null;
-        this.setupEvents();
         this.handleButtonAdd();
         window.addEventListener("hashchange", this.handleButtonAdd.bind(this));
     }

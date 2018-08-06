@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Plex to VLC</title>
+    <link rel="stylesheet" href="/options/css/semantic.min.css">
+    <link rel="stylesheet" href="/options/css/style.css">
+</head>
+
+<body>
+    <div class="ui container">
+
+        <div class="ui text container">
+            <h2 class="ui center aligned header">Plex to VLC</h2>
+            <h3 class="ui horizontal divider header">Settings</h3>
+            <form action="#" class="ui form">
+
+                <div class="field">
+                    <label for="player-select">Select Player</label>
+                    <select name="player-select" id="player-select" class="ui selection dropdown">
+                        <option value="default">System default</option>
+                        <option value="vlc">VLC</option>
+                        <option value="iina">IINA</option>
+                        <option value="mplayerx">MPlayerX</option>
+                        <option value="elmedia\ player">Elmedia Player</option>
+                        <option value="5kplayer">5KPlayer</option>
+                        <option value="cisdem\ video\ player">Cisdem Video Player</option>
+                    </select>
+
+
+                </div>
+
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" name="mark-played" id="mark-played" tabindex="0" class="hidden" checked>
+                        <label for="mark-played">Mark items as played</label>
+                    </div>
+                </div>
+
+            </form>
+            <h3 class="ui horizontal divider header">Help</h3>
+            <p>Download the companion app
+                <a href="https://github.com/soerenkampschroer/plex-to-vlc/releases/latest" target="_new">here</a>.</p>
+            <p>Follow the instructions
+                <a href="https://github.com/soerenkampschroer/plex-to-vlc" target="_new">here</a>.</a>
+
+        </div>
+    </div>
+
+
+    <script src="/options/scripts/vendor/jquery-3.3.1.min.js"></script>
+    <script src="/options/scripts/vendor/semantic.min.js"></script>
+    <script src="/options/scripts/main.js"></script>
+</body>
+
+</html>
