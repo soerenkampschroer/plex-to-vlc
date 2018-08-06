@@ -4,8 +4,6 @@ const fs = require('fs');
 const escapeStringRegExp = require("escape-string-regexp");
 const nativeMessage = require('chrome-native-messaging');
 
-const playerName = '';
-
 app.on('ready', () => {
     process.stdin
         .pipe(new nativeMessage.Input())
@@ -13,7 +11,7 @@ app.on('ready', () => {
         .pipe(new nativeMessage.Output())
         .pipe(process.stdout)
     ;
-})
+});
 
 
 /**
@@ -59,8 +57,8 @@ function openPlayer(request, push, done) {
     cmd = 'open ' + filePathClean;
 
     // open file in specific player if requested
-    if (playerName && playerName.length > 0) {
-        cmd+= ' -a ' + playerName;
+    if (request.player && request.player.length > 0 && request.player !== "default") {
+        cmd+= ' -a ' + request.player.replace(/[^0-9a-zA-Z ]/g, "").replace(/[ ]/g, "\\ ");
     }
     
     // open file
