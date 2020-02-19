@@ -3,6 +3,7 @@ export default class PlayerButton {
     constructor(clickCallback) {
         this.callback = clickCallback;
         this.interval = null;
+        this.toolbarSelector = ".measuredPageHeaderToolbar-toolbar-2vtgM4";
         this.handleButtonAdd();
         window.addEventListener("hashchange", this.handleButtonAdd.bind(this));
     }
@@ -15,7 +16,7 @@ export default class PlayerButton {
 
     checkLoaded() {
         this.interval = setInterval(() => {
-            if (document.querySelector(".pageHeaderToolbar-toolbar-1lW-M")) {
+            if (document.querySelector(this.toolbarSelector)) {
                 this.addVlcLink();
                 clearInterval(this.interval);
             }
@@ -25,9 +26,9 @@ export default class PlayerButton {
     addVlcLink() {
         if (!document.querySelector(".ptvlc-launch")) {
             var el = document.createElement("button");
-            el.classList = "ptvlc-launch ToolbarButton-toolbarButton-3xzHJ Link-link-2n0yJ Link-default-2XA2b";
+            el.classList = "ptvlc-launch ToolbarButton-toolbarButton-2i2nnD Link-link-2n0yJn Link-default-2XA2bN";
             el.innerHTML = "VLC";
-            document.querySelector(".pageHeaderToolbar-toolbar-1lW-M").appendChild(el);
+            document.querySelector(this.toolbarSelector).insertAdjacentElement("afterbegin", el);
             document.querySelector(".ptvlc-launch").addEventListener("mousedown", this.callback);
         }
     }
