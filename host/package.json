@@ -25,12 +25,12 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "electron": "^2.0.5",
-    "electron-builder": "^20.24.4"
+    "electron": "^8.0.1",
+    "electron-builder": "^22.3.2"
   },
   "dependencies": {
     "chrome-native-messaging": "^0.2.0",
-    "electron-log": "^2.2.16",
-    "escape-string-regexp": "^1.0.5"
+    "electron-log": "^4.0.6",
+    "escape-string-regexp": "^2.0.0"
   }
 }
