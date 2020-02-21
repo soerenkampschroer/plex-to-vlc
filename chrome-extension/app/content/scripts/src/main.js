@@ -67,11 +67,12 @@ class Main {
     sendPlaybackRequest(metadata) {
         let request = {
             "filePath": metadata.MediaContainer.Metadata[0].Media[0].Part[0].file,
+            "downloadUrl": window.location.origin + metadata.MediaContainer.Metadata[0].Media[0].Part[0].key + "?X-Plex-Token=" + this.plexApi.getAccessToken(),
             "title": metadata.MediaContainer.Metadata[0].title,
             "id": metadata.MediaContainer.Metadata[0].ratingKey,
             "type": "playback"
         };
-        console.log(request);
+        
         try {
             chrome.runtime.sendMessage(request);
         } catch (error) {
