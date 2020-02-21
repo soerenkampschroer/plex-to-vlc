@@ -10,7 +10,7 @@ class Main {
     /**
      * Acceptable host version.
      */
-    static ACCEPTABLE_HOST_VERSION = "1.2.1";
+    static ACCEPTABLE_HOST_VERSION = "1.3.0";
 
     constructor() {
         window.settings = new Settings();
