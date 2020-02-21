@@ -1,5 +1,5 @@
 const {app} = require('electron');
-const exec = require('child_process').exec;
+const exec = require('await-exec');
 const fs = require('fs');
 const escapeStringRegExp = require("escape-string-regexp");
 const nativeMessage = require('chrome-native-messaging');
@@ -13,7 +13,6 @@ app.on('ready', () => {
     ;
 });
 
-
 /**
  * Listen to messages from browser extension.
  * @param {object} request 
@@ -26,10 +25,7 @@ function messageReceived(request, push, done) {
         if (fs.existsSync(request.filePath)) {
             openPlayer(request, push, done);
         } else {
-            request.status = "error";
-            request.message = "File not found";
-            push(request);
-            done();
+            openStream(request, push, done);
         }
     } else if (request.type == "version") {
         request.version = app.getVersion();
@@ -38,10 +34,9 @@ function messageReceived(request, push, done) {
     }
 }
 
-
 /**
  * Opens a file using the specified app. The command looks like:
- * open /path/to/file -a appname
+ * open  -a appname /path/to/file
  * @param {object} request 
  * @param {*} push 
  * @param {*} done 
@@ -62,17 +57,75 @@ function openPlayer(request, push, done) {
     }
     
     // open file
-    exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-            request.status = "error";
-            request.message = stderr;
-        } else {
-            request.status = "success";
-            request.message = "Started playback";
+    request = executeCmd(cmd, request);
+
+    push(request);
+    done();
+}
+
+/**
+ * Opens a Plex download link in the specified app.
+ * 
+ * @param {object} request 
+ * @param {*} push 
+ * @param {*} done
+ */
+async function openStream (request, push, done) {
+    let player,
+        cmd,
+        filePathClean;
+
+    filePathClean = "'" + request.downloadUrl + "'";
+
+    if (request.player && request.player.length > 0 && request.player !== "default") {
+        player = request.player.replace(/[^0-9a-zA-Z ]/g, "").replace(/[ ]/g, "\\ ");
+    } else {
+        player = await getDefaultPlayer();
+        if (player == "iina") {
+            player = await getDefaultPlayer("io.iina.mkv");
         }
-        push(request);
-        done();
-    });
+    }
+    
+    if (player == "iina") {
+        cmd = "/Applications/IINA.app/Contents/MacOS/iina-cli " + filePathClean;
+    } else {
+        cmd = "open -a " + player + " " + filePathClean;
+    }
+
+    // open file
+    request = await executeCmd(cmd, request);
+    
+    push(request);
+    done();
+}
+
+/**
+ * @param {string} cmd 
+ * @param {*} request 
+ */
+async function executeCmd(cmd, request) {
+    const {error, stdout, stderr} = await exec(cmd);
+    
+    if (error) {
+        request.status = "error";
+        request.message = stderr;
+    } else {
+        request.status = "success";
+        request.message = "Started playback";
+    }
+    
+    return request;
+}
+
+/**
+ * Parse out the defualt player for mkv files.
+ * @returns {Promise}
+ */
+async function getDefaultPlayer(contentType = "org.matroska.mkv") {
+    const cmd = "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | grep -A 2 "+ contentType +" | tail -1";
+    const myRe = /(?<=[a-z]*\.[a-z]*\.).*?(?=\s)/g;
+    const {error, stdout, stderr} = await exec(cmd);
+    return myRe.exec(stdout)[0];
 }
 
 /**
