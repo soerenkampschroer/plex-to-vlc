@@ -28,7 +28,7 @@ export default class PlayerButton {
             var el = document.createElement("button");
             el.classList = "ptvlc-launch ToolbarButton-toolbarButton-2i2nnD Link-link-2n0yJn Link-default-2XA2bN";
             el.innerHTML = "VLC";
-            document.querySelector(this.toolbarSelector).insertAdjacentElement("afterbegin", el);
+            document.querySelector(this.toolbarSelector).append(el);
             document.querySelector(".ptvlc-launch").addEventListener("mousedown", this.callback);
         }
     }
