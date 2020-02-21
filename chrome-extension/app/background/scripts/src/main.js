@@ -19,14 +19,12 @@ class Main {
     }
 
     handleMessage(request) {
-        console.log("New request:", request);
         request.player = window.settings.get().player;
-        console.log(request);
         this.openNativeMessagePort(request, this.onDisconnected.bind(this), this.onMessage.bind(this));
     }
 
     handleOnInstalled() {
-        this.openNativeMessagePort({type: "version"}, this.onDisconnected.bind(this), this.onCheckVersionMessage.bind(this));
+        //this.openNativeMessagePort({type: "version"}, this.onDisconnected.bind(this), this.onCheckVersionMessage.bind(this));
     }
 
     onCheckVersionMessage(request, port) {
@@ -50,7 +48,6 @@ class Main {
     }
 
     onMessage(request, port) {
-        console.log(request);
         request.markItemsPlayed = window.settings.get().markItemsPlayed;
         this.sendMessageToContentScript(request);
         port.disconnect();
@@ -65,7 +62,7 @@ class Main {
     }
 
     displayHostUpdateDialog() {
-        if (confirm("You need to install latest native host application. Do you want to open the guide now?\n\nYou can also click on the extension icon to learn more.")) {
+        if (confirm("You need to install the latest native host application. Do you want to open the guide now?\n\nYou can also click on the extension icon to learn more.")) {
             window.open("https://github.com/soerenkampschroer/plex-to-vlc/releases/latest", "_blank");
         }
     }
