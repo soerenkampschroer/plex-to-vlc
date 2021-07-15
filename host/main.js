@@ -1,7 +1,7 @@
 const {app} = require('electron');
-const exec = require('await-exec');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const fs = require('fs');
-const escapeStringRegExp = require("escape-string-regexp");
 const nativeMessage = require('chrome-native-messaging');
 
 app.on('ready', () => {
@@ -20,7 +20,6 @@ app.on('ready', () => {
  * @param {*} done 
  */
 function messageReceived(request, push, done) {
-
     if (request.type == "playback") {
         if (fs.existsSync(request.filePath)) {
             openPlayer(request, push, done);
@@ -41,7 +40,7 @@ function messageReceived(request, push, done) {
  * @param {*} push 
  * @param {*} done 
  */
-function openPlayer(request, push, done) {
+ function openPlayer(request, push, done) {
     
     let cmd,
         filePathClean;
@@ -57,10 +56,7 @@ function openPlayer(request, push, done) {
     }
     
     // open file
-    request = executeCmd(cmd, request);
-
-    push(request);
-    done();
+    executeCmd(cmd, request, push, done);
 }
 
 /**
@@ -93,28 +89,34 @@ async function openStream (request, push, done) {
     }
 
     // open file
-    request = await executeCmd(cmd, request);
-    
-    push(request);
-    done();
+    executeCmd(cmd, request, push, done);
 }
 
 /**
  * @param {string} cmd 
  * @param {*} request 
  */
-async function executeCmd(cmd, request) {
-    const {error, stdout, stderr} = await exec(cmd);
-    
-    if (error) {
+async function executeCmd(cmd, request, push, done) {
+    try {
+        let {stdout, stderr} = await exec(cmd);
+
+        if (stderr) {
+            request.status = "error";
+            request.message = stderr;
+        } else {
+            request.status = "success";
+            request.message = "Started playback";
+        }
+        push(request);
+        done();
+
+    } catch (error) {
         request.status = "error";
-        request.message = stderr;
-    } else {
-        request.status = "success";
-        request.message = "Started playback";
+        request.message = error.toString();
+        
+        push(request);
+        done();
     }
-    
-    return request;
 }
 
 /**
@@ -124,7 +126,7 @@ async function executeCmd(cmd, request) {
 async function getDefaultPlayer(contentType = "org.matroska.mkv") {
     const cmd = "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | grep -A 2 "+ contentType +" | tail -1";
     const myRe = /(?<=[a-z]*\.[a-z]*\.).*?(?=\s)/g;
-    const {error, stdout, stderr} = await exec(cmd);
+    const {stdout, stderr} = await exec(cmd);
     return myRe.exec(stdout)[0];
 }
 
@@ -135,5 +137,5 @@ async function getDefaultPlayer(contentType = "org.matroska.mkv") {
  */
 function escapeFilePath(filePath) {
     filePath = filePath.trim();
-    return escapeStringRegExp(filePath).replace(/(\s+)/g, '\\$1');
+    return '"' + filePath.replace('"', '') + '"';
 }
