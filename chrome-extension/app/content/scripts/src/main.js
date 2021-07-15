@@ -10,6 +10,7 @@ class Main {
         this.notification = new Notification();
         this.button = new PlayerButton(this.handleButtonCLicked.bind(this));
         chrome.runtime.onMessage.addListener(this.handleBackgroundPageMessage.bind(this));
+        chrome.runtime.sendMessage({"type": "hostVersionCheck"});
     }
 
     /**
@@ -17,7 +18,11 @@ class Main {
      * @param {object} response 
      */
     handleBackgroundPageMessage(response) {
-        if (response.status == "error") {
+        if (response == "installHost") {
+            if (confirm("Plex to VLC\n\nYou need to install the latest Plex to VLC native host application. Do you want to open the guide now?\n\nYou can also click on the Plex to VLC extension icon to learn more.")) {
+                window.open("https://github.com/soerenkampschroer/plex-to-vlc/releases/latest", "_blank");
+            }
+        } else if (response.status == "error") {
             this.notification.display(
                 response.message + ":<br>" + response.filePath,
                 Notification.Type.ERROR
@@ -57,7 +62,6 @@ class Main {
             "Could not reach server.",
             Notification.Type.ERROR
         );
-        console.log(error);
     }
 
     /**

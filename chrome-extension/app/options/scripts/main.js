@@ -1,25 +1,30 @@
 /* global $ */
 
 window.addEventListener("load", function() {
-    var bgPage = chrome.extension.getBackgroundPage();
+    chrome.runtime.sendMessage({"type": "getSettings"}, function(settings) {
     
-    
-    var settings = bgPage.settings.get();
-    
-    document.getElementById("mark-played").checked = settings.markItemsPlayed;
-    document.getElementById("player-select").value = settings.player;
-    //$("#player-select").dropdown("set selected", settings.player);
-    
+        document.getElementById("mark-played").checked = settings.markItemsPlayed;
+        document.getElementById("player-select").value = settings.player;
+        
+        $("#player-select").dropdown("set selected", settings.player);
+        
+    });
+
     $("#player-select").dropdown();
 
     document.getElementById("mark-played").addEventListener("change", function () {
-        bgPage.settings.markItemsPlayed = this.checked;
-        bgPage.settings.save();
+        saveSettings();
     });
 
     document.getElementById("player-select").addEventListener("change", function () {
-        bgPage.settings.player = this.value;
-        bgPage.settings.save();
+        saveSettings();
     });
 
+    function saveSettings() {
+        let settings = {};
+        settings.markItemsPlayed = document.getElementById("mark-played").checked;
+        settings.player = document.getElementById("player-select").value;
+        chrome.runtime.sendMessage({"type": "saveSettings", "settings": settings});
+    }
+    
 });

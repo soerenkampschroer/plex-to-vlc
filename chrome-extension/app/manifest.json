@@ -1,13 +1,13 @@
 {
   "name": "Plex to VLC",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "This extension adds a \"VLC\" button to the Plex Web Player interface. Only supports macOS and needs a companion application.",
   "icons": { 
     "16":  "icons/fullscreen-16.png",
     "48":  "icons/fullscreen-48.png",
     "128": "icons/fullscreen-128.png" },
-  "background": { 
-    "scripts": ["background/scripts/dist/background-script.bundle.js"] 
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -20,13 +20,15 @@
   ],
   "permissions": [
     "nativeMessaging",
-    "storage",
+    "storage"
+  ],
+  "host_permissions": [
     "http://127.0.0.1:32400/web/index.html*"
   ],
-  "browser_action": {
+  "action": {
       "default_name": "Plex to VLC",
       "default_icon": "icons/fullscreen-48.png",
       "default_popup": "options/options.html"
   },
-  "manifest_version": 2
+  "manifest_version": 3
 }

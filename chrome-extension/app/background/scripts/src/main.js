@@ -1,4 +1,4 @@
-import Settings from "./Settings";
+import Settings from "./Settings.js";
 
 class Main {
 
@@ -8,23 +8,46 @@ class Main {
     static HOST_NAME = "com.soerenkampschroer.plextovlc";
     
     /**
-     * Acceptable host version.
+     * Minumum companion app version.
      */
-    static ACCEPTABLE_HOST_VERSION = "1.3.0";
+    static ACCEPTABLE_HOST_VERSION = "1.4.0";
 
     constructor() {
-        window.settings = new Settings();
         chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
         chrome.runtime.onInstalled.addListener(this.handleOnInstalled.bind(this));
     }
 
-    handleMessage(request) {
-        request.player = window.settings.get().player;
-        this.openNativeMessagePort(request, this.onDisconnected.bind(this), this.onMessage.bind(this));
+    handleMessage(request, caller, callback) {
+        this.handleMessageWrapper(request, caller, callback).then(callback);
+        return true;
+    }
+
+    async handleMessageWrapper(request, caller, callback) {
+        
+        let settings = new Settings();
+        await settings.load();
+
+        switch (request.type) {
+            case "playback":
+                request.player = settings.get().player;
+                this.openNativeMessagePort(request, this.onDisconnected.bind(this), this.onMessage.bind(this));       
+                return true;
+            case "getSettings":
+                return settings.get();
+            case "saveSettings":
+                settings.markItemsPlayed = request.settings.markItemsPlayed;
+                settings.player = request.settings.player;
+                settings.save(request.settings);
+                return true;
+            case "hostVersionCheck":
+                this.openNativeMessagePort({type: "version"}, this.onDisconnected.bind(this), this.onCheckVersionMessage.bind(this));
+                return true;
+        }
     }
 
     handleOnInstalled() {
-        //this.openNativeMessagePort({type: "version"}, this.onDisconnected.bind(this), this.onCheckVersionMessage.bind(this));
+        // console.log('checking host app version');
+        // this.openNativeMessagePort({type: "version"}, this.onDisconnected.bind(this), this.onCheckVersionMessage.bind(this));
     }
 
     onCheckVersionMessage(request, port) {
@@ -47,14 +70,15 @@ class Main {
         port.postMessage(request);
     }
 
-    onMessage(request, port) {
-        request.markItemsPlayed = window.settings.get().markItemsPlayed;
+    async onMessage(request, port) {
+        let settings = new Settings();
+        await settings.load();
+        request.markItemsPlayed = settings.get().markItemsPlayed;
         this.sendMessageToContentScript(request);
         port.disconnect();
     }
 
     onDisconnected() {
-        console.log(chrome.runtime.lastError.message);
         if (chrome.runtime.lastError.message == "Specified native messaging host not found."
             || chrome.runtime.lastError.message == "Access to the specified native messaging host is forbidden.") {
             this.displayHostUpdateDialog();
@@ -62,9 +86,7 @@ class Main {
     }
 
     displayHostUpdateDialog() {
-        if (confirm("You need to install the latest native host application. Do you want to open the guide now?\n\nYou can also click on the extension icon to learn more.")) {
-            window.open("https://github.com/soerenkampschroer/plex-to-vlc/releases/latest", "_blank");
-        }
+        this.sendMessageToContentScript("installHost");
     }
 
     sendMessageToContentScript(message) {
