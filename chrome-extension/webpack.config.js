@@ -2,7 +2,7 @@
 var path = require("path");
 
 var contentScript = {
-    mode: "production",
+    mode: "development",
     watch: true,
     entry: "./app/content/scripts/src/main.js",
     output: {
@@ -17,8 +17,8 @@ var contentScript = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"],
-                        plugins: ["transform-class-properties"]
+                        //presets: ["@babel/preset-env"],
+                        plugins: ["@babel/plugin-syntax-class-properties"]
                     }
                 }
             }
@@ -31,12 +31,12 @@ var contentScript = {
 };
 
 var backgroundScript = {
-    mode: "production",
+    mode: "development",
     watch: true,
     entry: "./app/background/scripts/src/main.js",
     output: {
-        path: path.resolve(__dirname, "app/background/scripts/dist/"),
-        filename: "background-script.bundle.js"
+        path: path.resolve(__dirname, "app/"),
+        filename: "background.js"
     },
     module: {
         rules: [
@@ -46,8 +46,8 @@ var backgroundScript = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"],
-                        plugins: ["transform-class-properties"]
+                        //presets: ["@babel/preset-env"],
+                        plugins: ["@babel/plugin-syntax-class-properties"]
                     }
                 }
             }
