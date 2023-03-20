@@ -31,7 +31,6 @@ export default class PlayerButton {
             var buttonLocation = document.querySelector(this.insertSelector);
             el.classList =  "ptvlc-launch " + buttonLocation.classList;
             el.innerHTML = "VLC";
-            console.log(el, buttonLocation);
             toolbar.insertBefore(el, buttonLocation);
             document.querySelector(".ptvlc-launch").addEventListener("mousedown", this.callback);
         }
