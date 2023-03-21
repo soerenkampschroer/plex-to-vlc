@@ -28,7 +28,7 @@ export default class PlexApi {
         let url,
             response;
 
-        url = window.location.origin + "/library/metadata/" + id + "?includeConcerts=1&includeExtras=1&includeOnDeck=1&includePopularLeaves=1&includePreferences=1&includeChapters=1&asyncCheckFiles=0&asyncRefreshAnalysis=0&asyncRefreshLocalMediaAgent=0";
+            url = this.getServerUrl() + "/library/metadata/" + id + "?includeConcerts=1&includeExtras=1&includeOnDeck=1&includePopularLeaves=1&includePreferences=1&includeChapters=1&asyncCheckFiles=0&asyncRefreshAnalysis=0&asyncRefreshLocalMediaAgent=0";
         response = await this.makeRequest(url, true);
 
         return response;
@@ -39,6 +39,44 @@ export default class PlexApi {
      */
     getAccessToken() {
         return localStorage.myPlexAccessToken;
+    }
+
+    /**
+     * Returns the correct server url. Useful if the Plex UI is not the same as the media server location.
+     * @return {string}
+     */
+    getServerUrl() {
+        let serverUrl = '';
+        let users = JSON.parse(localStorage.users).users;
+
+        users.forEach(user => {
+
+            user.servers.forEach(server => {
+                if (window.location.hash.includes(server.machineIdentifier)) {
+                    let connection;
+                    
+                    // if it's a local server, try to find the direct connection
+                    connection = server.connections.find(connection => connection.sources[0].id === 'internal' );
+                    
+                    // if there is no local connection, get any connection
+                    if (!connection) {
+                        connection = server.connections.find(connection => connection.uri !== undefined );
+                    }
+
+                    if (connection) {
+                        serverUrl = connection.uri;
+                    }
+                    
+                }
+            });
+        });
+
+        // fallback in case we couldn't find a url
+        if (serverUrl == '') {
+            serverUrl = window.location.origin;
+        }
+        console.log(serverUrl);
+        return serverUrl;
     }
 
     /**
@@ -58,7 +96,7 @@ export default class PlexApi {
      * @param {int} id 
      */
     async markAsPlayed(id) {
-        let url = window.location.origin + "/:/scrobble?key=" + id + "&identifier=com.plexapp.plugins.library";
+        let url = this.getServerUrl() + "/:/scrobble?key=" + id + "&identifier=com.plexapp.plugins.library";
         
         try {
             await this.makeRequest(url, false);
