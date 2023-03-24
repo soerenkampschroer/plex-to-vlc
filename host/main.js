@@ -124,7 +124,7 @@ async function executeCmd(cmd, request, push, done) {
  * @returns {Promise}
  */
 async function getDefaultPlayer(contentType = "org.matroska.mkv") {
-    const cmd = "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | grep -A 2 "+ contentType +" | tail -1";
+    const cmd = "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | grep -A 2 'mpeg-4' | grep 'all roles' | awk '{print $3}'";
     const myRe = /(?<=[a-z]*\.[a-z]*\.).*?(?=\s)/g;
     const {stdout, stderr} = await exec(cmd);
     return myRe.exec(stdout)[0];
