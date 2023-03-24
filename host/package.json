@@ -1,6 +1,6 @@
 {
   "name": "plex-to-vlc",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "",
   "main": "main.js",
   "author": "",
@@ -25,13 +25,13 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "electron": "^13.1.6",
-    "electron-builder": "^22.3.2"
+    "electron": "^23.1.4",
+    "electron-builder": "^23.6.0"
   },
   "dependencies": {
     "await-exec": "^0.1.2",
     "chrome-native-messaging": "^0.2.0",
-    "electron-log": "^4.0.6",
+    "electron-log": "^5.0.0-beta.16",
     "sanitize-filename": "^1.6.3"
   }
 }
