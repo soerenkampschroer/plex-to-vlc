@@ -26,8 +26,9 @@
 2. Double click the *.dmg*: This mounts the disk image and opens it in a Finder window.
 3. Drag and drop the contained `plex-to-vlc.app` to `/Applications`
 4. Download the Native Messaging configuration file for Chrome [here](chrome-extension/com.soerenkampschroer.plextovlc.json).
-    Move it to `~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/`.
-  **Note:** If you didn't move the App to `/Applications` in step 2, you need to update the path in the json file.
+    - Move it to `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/`. **Notes:**
+      - Finder → Menu → Go → Go to folder… (`⌘ ⇧ G`) → Paste the path with the whitespace unescaped (as in the code snippet above) or else the path is not resolved!
+      - If you didn't move the App to `/Applications` in step 2, you need to update the path in the json file.
 
 ## Usage
 
