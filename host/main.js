@@ -21,11 +21,7 @@ app.on('ready', () => {
  */
 function messageReceived(request, push, done) {
     if (request.type == "playback") {
-        if (fs.existsSync(request.filePath)) {
-            openPlayer(request, push, done);
-        } else {
-            openStream(request, push, done);
-        }
+        openPlayer(request, push, done);
     } else if (request.type == "version") {
         request.version = app.getVersion();
         push(request);
@@ -34,61 +30,36 @@ function messageReceived(request, push, done) {
 }
 
 /**
- * Opens a file using the specified app. The command looks like:
+ * Opens a file or url using the specified app. The command looks like:
  * open  -a appname /path/to/file
- * @param {object} request 
+ * @param {string} filePath 
+ * @param {*} request 
  * @param {*} push 
  * @param {*} done 
  */
- function openPlayer(request, push, done) {
-    
-    let cmd,
-        filePathClean;
+async function openPlayer(request, push, done) {
+    let cmd, 
+        player, 
+        filePath;
 
-    filePathClean = escapeFilePath(request.filePath);
-
-    // app path + file path as argument
-    cmd = 'open ' + filePathClean;
-
-    // open file in specific player if requested
-    if (request.player && request.player.length > 0 && request.player !== "default") {
-        cmd+= ' -a ' + request.player.replace(/[^0-9a-zA-Z ]/g, "").replace(/[ ]/g, "\\ ");
+    // use local path if the file exists, otherwise use the downloadUrl for remote files
+    if (fs.existsSync(request.filePath)) {
+        filePath = escapeFilePath(request.filePath);
+    } else {
+        filePath = escapeFilePath(request.downloadUrl);
     }
-    
-    // open file
-    executeCmd(cmd, request, push, done);
-}
 
-/**
- * Opens a Plex download link in the specified app.
- * 
- * @param {object} request 
- * @param {*} push 
- * @param {*} done
- */
-async function openStream (request, push, done) {
-    let player,
-        cmd,
-        filePathClean;
-
-    filePathClean = "'" + request.downloadUrl + "'";
-
+    // use the requested player or get the default player from the system
     if (request.player && request.player.length > 0 && request.player !== "default") {
         player = request.player.replace(/[^0-9a-zA-Z ]/g, "").replace(/[ ]/g, "\\ ");
     } else {
         player = await getDefaultPlayer();
-        if (player == "iina") {
-            player = await getDefaultPlayer("io.iina.mkv");
-        }
     }
     
-    if (player == "iina") {
-        cmd = "/Applications/IINA.app/Contents/MacOS/iina-cli " + filePathClean;
-    } else {
-        cmd = "open -a " + player + " " + filePathClean;
-    }
-
-    // open file
+    // build the command
+    cmd = 'open -a "' + player + '" ' + filePath;
+    
+    // done
     executeCmd(cmd, request, push, done);
 }
 
@@ -137,5 +108,6 @@ async function getDefaultPlayer(contentType = "org.matroska.mkv") {
  */
 function escapeFilePath(filePath) {
     filePath = filePath.trim();
+    
     return '"' + filePath.replace('"', '') + '"';
 }
