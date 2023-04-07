@@ -14,13 +14,15 @@
 
 ## Installing
 
-### Automatic
+### First install the companion app — automatically or manually
+
+#### Automatic Installation
 
 1. Download the *.pkg* file from the [release page](https://github.com/soerenkampschroer/plex-to-vlc/releases/latest).
 2. Run the installer.
 3. Done!
 
-### Manual
+#### Manual Installation
 
 1. Download the *.dmg* from the [release page](https://github.com/soerenkampschroer/plex-to-vlc/releases/latest).
 2. Double click the *.dmg*: This mounts the disk image and opens it in a Finder window.
@@ -29,6 +31,12 @@
     - Move it to `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/`. **Notes:**
       - Finder → Menu → Go → Go to folder… (`⌘ ⇧ G`) → Paste the path with the whitespace unescaped (as in the code snippet above) or else the path is not resolved!
       - If you didn't move the App to `/Applications` in step 2, you need to update the path in the json file.
+
+### Then install the Chrome extension
+
+1. Get the [Chrome extension](https://chrome.google.com/webstore/detail/plex-to-vlc/admjkihehbkklbidlcpmjcaplbkngeed).
+2. Install it and acivate it.
+3. If necessary give it permissions to access your loopback address (aka 127.0.0.1 aka localhost).
 
 ## Usage
 
